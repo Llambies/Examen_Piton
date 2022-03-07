@@ -77,33 +77,50 @@ def choose_secret_advanced(nombreArchivo):
       selected: Lista de 15 palabras aleatorias no repetidas que tienen 5 letras y no tienen acentos
       secret: Palabra elegida aleatoriamente de la lista de 15 seleccionadas transformada a mayúsculas
     """
-    accentos = ("á","é","í","ó","ú")
+    accentos = ["á","é","í","ó","ú"]
     palabros=[]
     with open(nombreArchivo, mode="rt", encoding="utf-8") as f:
       for linea in f:
           palabras = linea.split(" ")
           for p in palabras:
-              if " " in p:
-                  palabras.remove(p)
-              elif "\n" in p:
-                if(len(p[0:(len(p)-1)])==5):
-                  palabros.append(p[0:(len(p)-1)])
+              if "\n" in p:
+                p = p[0:(len(p)-1)]
+                valida = True
+                for letra in p:
+                  if(contains(accentos,letra)):
+                    valida = False
+                if(len(p)==5):
+                  if(valida):
+                    if not (contains(palabros,p)):
+                      palabros.append(p)
           
           
     palabras = palabros[0:15]
     numero = r.randint(0,len(palabras))
     return palabras[numero]
  
-def check_valid_word():
+def check_valid_word(selected):
     """Dada una lista de palabras, esta función pregunta al usuario que introduzca una palabra hasta que introduzca una que esté en la lista. Esta palabra es la que devolverá la función.
     Args:
       selected: Lista de palabras.
     Returns:
       word: Palabra introducida por el usuario que está en la lista.
     """
+    word = input("Introduce una palabra :")
+
+    while( not contains(selected,word)):  
+      word = input("Introduce otra palabra :")
+
+    return word
+
+
+
 
 if __name__ == "__main__":
     secret=choose_secret_advanced("palabras_extended.txt")
+    lista_palabras = ['metro', 'sigla', 'mergo', 'mafia', 'chica', 'tozar', 'risco', 'merca', 'almea', 'suero', 'nidio', 'visco', 'guaro', 'hampo', 'toque']
+    check_valid_word(lista_palabras)
+    
     print("Palabra a adivinar: "+secret) #Debug: esto es para que sepas la palabra que debes adivinar
     for repeticiones in range(0,6):
         word = input("Introduce una nueva palabra: ")
