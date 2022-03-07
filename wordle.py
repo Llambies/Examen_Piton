@@ -1,3 +1,4 @@
+from cgitb import text
 from operator import contains, le
 import random as r
 
@@ -10,18 +11,18 @@ def choose_secret(nombreArchivo):
       secret: Palabra elegida aleatoriamente del fichero transformada a mayúsculas. Ej. "CREMA"
     """
     palabros=[]
+    texto = ""
     with open(nombreArchivo, mode="rt", encoding="utf-8") as f:
-      for linea in f:
-          palabras = linea.split(" ")
-          for p in palabras:
-              if " " in p:
-                  palabras.remove(p)
-              if "\n" in p:
-                  palabros.append(p[0:(len(p)-1)])
-          
-          
+      texto = f.read()
+      if(len(texto)<1):
+        raise ValueError("Fichero vacío")
+
+      palabras = texto.split("\n")
+      for p in palabras:
+          palabros.append(p)
 
     numero = r.randint(0,len(palabros))
+    print(palabros)
     return palabros[numero]
 
 
@@ -36,6 +37,9 @@ def compare_words(secret,word):
       same_position: Lista de posiciones de word cuyas letras coinciden en la misma posición en secret. En el caso anterior: [0]
       same_letter: Lista de posiciones de word cuyas letras están en secret pero en posiciones distintas. En el caso anterior: [1,2]
     """
+    if(len(secret)!=len(word)):
+      raise ValueError("No tienen el mismo tamaño")
+
     same_position = []
     same_letter = []
 
@@ -64,8 +68,7 @@ def print_word(word,same_position,same_letter):
         transformed+=word[i].lower()
       else:
         transformed+="-"
-
-    print(transformed)
+    return transformed
         
 
     
@@ -94,7 +97,8 @@ def choose_secret_advanced(nombreArchivo):
                     if not (contains(palabros,p)):
                       palabros.append(p)
           
-          
+    if(len(palabros)<15):
+      raise ValueError("No hay suficientes palabras") 
     palabras = palabros[0:15]
     numero = r.randint(0,len(palabras))
     return palabras[numero]
@@ -109,7 +113,7 @@ def check_valid_word(selected):
     word = input("Introduce una palabra :")
 
     while( not contains(selected,word)):  
-      word = input("Introduce otra palabra :")
+      word = input("Palabra no válida, introduce otra palabra :")
 
     return word
 
@@ -117,13 +121,20 @@ def check_valid_word(selected):
 
 
 if __name__ == "__main__":
-    secret=choose_secret_advanced("palabras_extended.txt")
+    try:
+      #secret=choose_secret("palabras_reduced.txt")
+      secret=choose_secret_advanced("palabras_extended.txt")
+    except Exception as exc:
+      print(exc)
+      exit()
+
+
     lista_palabras = ['metro', 'sigla', 'mergo', 'mafia', 'chica', 'tozar', 'risco', 'merca', 'almea', 'suero', 'nidio', 'visco', 'guaro', 'hampo', 'toque']
-    check_valid_word(lista_palabras)
+    
     
     print("Palabra a adivinar: "+secret) #Debug: esto es para que sepas la palabra que debes adivinar
     for repeticiones in range(0,6):
-        word = input("Introduce una nueva palabra: ")
+        word = check_valid_word(lista_palabras)
         same_position, same_letter = compare_words(secret,word)
         resultado=print_word(word,same_position,same_letter)
         print(resultado)
@@ -131,3 +142,4 @@ if __name__ == "__main__":
             print("HAS GANADO!!")
             exit()
     print("LO SIENTO, NO LA HAS ADIVINIDADO. LA PALABRA ERA "+secret)   
+    
