@@ -49,6 +49,7 @@ def compare_words(secret,word):
       elif(contains(secret,word[i])):
         same_letter.append(i)
 
+    
     return same_position,same_letter
 
 def print_word(word,same_position,same_letter):
@@ -60,6 +61,17 @@ def print_word(word,same_position,same_letter):
     Returns:
       transformed: La palabra aplicando las transformaciones. En el caso anterior: "Cam--"
     """
+    if(type(same_letter) != list):
+      raise ValueError ("No es una lista")
+    if(type(same_position) != list):
+      raise ValueError ("No es una lista")
+
+    for i in same_letter:
+      if(i<0):
+        raise ValueError ("Valores negativos")
+      elif(i>len(word)):
+        raise ValueError ("Valores fuera de la palabra")
+
     transformed = ""
     for i in range(len(word)):
       if(contains(same_position,i)):
@@ -136,7 +148,13 @@ if __name__ == "__main__":
     for repeticiones in range(0,6):
         word = check_valid_word(lista_palabras)
         same_position, same_letter = compare_words(secret,word)
-        resultado=print_word(word,same_position,same_letter)
+
+        try :
+          resultado=print_word(word,same_position,same_letter)
+        except Exception as exc:
+          print(exc)
+          exit()
+        
         print(resultado)
         if word == secret:
             print("HAS GANADO!!")
