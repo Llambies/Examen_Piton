@@ -49,8 +49,12 @@ def repartir_cartas(cartas_iniciales,repeticiones):
       combinaciones: ej. {'repeticion1': ['contable', 'alguacil', 'asesino', 'cardenal', 'obispo']}
     """    
     combinaciones={}
+
     for i in range(1,repeticiones+1):
-        cartas_aleatorias = cartas_iniciales 
+        #El error esta en como se guarda la lista
+        #cartas_aleatorias = cartas_iniciales
+        #al gaurdarlo así se convertiran en copias de si mismas con diferente nombre, un puntero
+        cartas_aleatorias = cartas_iniciales.copy()
         combinaciones["repeticion"+str(i)]=[]
         for j in range(0,5):
             carta=random.choice(cartas_aleatorias)
